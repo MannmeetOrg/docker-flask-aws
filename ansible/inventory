@@ -1,0 +1,8 @@
+[blue]
+blue-server-1 ansible_host=<BLUE_SERVER_IP>
+
+[green]
+green-server-1 ansible_host=<GREEN_SERVER_IP>
+
+[mysql]
+mysql-server ansible_host=<MYSQL_SERVER_IP>
