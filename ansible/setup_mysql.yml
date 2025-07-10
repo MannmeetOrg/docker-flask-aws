@@ -1,0 +1,39 @@
+---
+- name: Setup MySQL 8.4 Server
+  hosts: mysql
+  become: yes
+
+  tasks:
+    - name: Install MySQL
+      yum:
+        name: mysql-server
+        state: present
+
+    - name: Start and enable MySQL
+      service:
+        name: mysqld
+        state: started
+        enabled: yes
+
+    - name: Set MySQL root password
+      mysql_user:
+        name: root
+        password: "{{ mysql_root_password }}"
+        login_unix_socket: /var/lib/mysql/mysql.sock
+        host_all: yes
+        state: present
+
+    - name: Create flask_app_db database
+      mysql_db:
+        name: flask_app_db
+        encoding: utf8mb4
+        collation: utf8mb4_unicode_ci
+        state: present
+
+    - name: Create flask_user
+      mysql_user:
+        name: flask_user
+        password: "Flask@1234"
+        priv: "flask_app_db.*:ALL"
+        host: "%"
+        state: present

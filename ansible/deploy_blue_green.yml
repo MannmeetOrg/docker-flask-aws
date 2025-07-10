@@ -1,0 +1,48 @@
+---
+- name: Deploy Flask Docker App (Blue/Green)
+  hosts: blue:green
+  become: yes
+  vars:
+    docker_image: "{{ docker_image }}"
+    flask_env: "{{ flask_env }}"
+    flask_secret_key: "{{ flask_secret_key }}"
+    db_host: "{{ db_host }}"
+    db_port: "{{ db_port }}"
+    db_name: "{{ db_name }}"
+    db_user: "{{ db_user }}"
+    db_password: "{{ db_password }}"
+    debug: "{{ debug }}"
+
+  tasks:
+    - name: Pull Docker image
+      community.docker.docker_image:
+        name: "{{ docker_image }}"
+        source: pull
+
+    - name: Stop existing container
+      community.docker.docker_container:
+        name: flask_app
+        state: absent
+
+    - name: Run Flask app container
+      community.docker.docker_container:
+        name: flask_app
+        image: "{{ docker_image }}"
+        state: started
+        restart_policy: always
+        env:
+          FLASK_ENV: "{{ flask_env }}"
+          FLASK_SECRET_KEY: "{{ flask_secret_key }}"
+          DB_HOST: "{{ db_host }}"
+          DB_PORT: "{{ db_port }}"
+          DB_NAME: "{{ db_name }}"
+          DB_USER: "{{ db_user }}"
+          DB_PASSWORD: "{{ db_password }}"
+          DEBUG: "{{ debug }}"
+        ports:
+          - "80:5000"
+
+    - name: Switch traffic (if using ALB/Route53)
+      # Add tasks here to update target group or DNS as needed
+      debug:
+        msg: "Switching traffic to new deployment (implement ALB/Route53 logic here)"

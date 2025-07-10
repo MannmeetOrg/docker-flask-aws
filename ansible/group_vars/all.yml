@@ -1,0 +1,15 @@
+# group_vars/all.yml
+
+aws_region: us-east-1
+flask_env: production
+debug: False
+docker_image: "cloudmahir19/flaskapp:latest"
+
+db_host: "{{ hostvars['mysql-server']['ansible_host'] }}"
+db_port: 3306
+db_name: flask_app_db
+db_user: flask_user
+db_password: "Flask@1234"  # Use Ansible Vault for this in production
+
+flask_secret_key: "{{ lookup('env', 'FLASK_SECRET_KEY') }}"
+slack_webhook_url: "{{ lookup('env', 'SLACK_WEBHOOK_URL') }}"
